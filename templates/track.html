@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Track Order – AOneArt{% endblock %}
+{% block content %}
+<div class="page-hero">
+  <h1 class="page-hero-title">Track Your <span>Order</span></h1>
+  <nav class="breadcrumb"><a href="{{ url_for('index') }}">Home</a><span>›</span><span>Track Order</span></nav>
+</div>
+
+<div class="track-wrap">
+  <div class="track-search">
+    <div class="track-title"><i class="fas fa-search" style="color:var(--gold);margin-right:10px;"></i>Order Tracker</div>
+    <p class="track-desc">Enter your Order ID (e.g. OA-K4RX92BN) to check your delivery status in real time.</p>
+    <form method="GET" action="{{ url_for('track_order') }}">
+      <div class="track-input-row">
+        <input type="text" name="order_id" placeholder="e.g. OA-K4RX92BN" value="{{ request.args.get('order_id','') }}" required>
+        <button type="submit" class="btn btn-gold"><i class="fas fa-search"></i> Track</button>
+      </div>
+    </form>
+  </div>
+
+  {% if searched %}
+    {% if order %}
+    <div class="success-card">
+      <div class="success-row"><span class="s-lbl">Order ID</span><span class="s-val hi">{{ order.order_ref }}</span></div>
+      <div class="success-row"><span class="s-lbl">Customer</span><span class="s-val">{{ order.customer_name }}</span></div>
+      <div class="success-row"><span class="s-lbl">City</span><span class="s-val">{{ order.city }}</span></div>
+      <div class="success-row"><span class="s-lbl">Total</span><span class="s-val hi">Rs. {{ "{:,.0f}".format(order.total) }}</span></div>
+      <div class="success-row"><span class="s-lbl">Placed</span><span class="s-val">{{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</span></div>
+      <div class="success-row"><span class="s-lbl">Status</span><span class="status-badge status-{{ order.status }}">{{ order.status }}</span></div>
+    </div>
+
+    {% set steps = ['Pending','Confirmed','Processing','Shipped','Delivered'] %}
+    {% set icons = ['fa-clock','fa-check','fa-cog','fa-truck','fa-home'] %}
+    <div class="track-steps">
+      {% for i in range(steps|length) %}
+        {% set step = steps[i] %}
+        {% set icon = icons[i] %}
+        {% set cur_idx = steps.index(order.status) if order.status in steps else 0 %}
+        <div class="track-step {% if i < cur_idx %}done{% elif i == cur_idx %}active{% endif %}">
+          <div class="step-circle"><i class="fas {{ icon }}" style="font-size:13px;"></i></div>
+          <div class="step-label">{{ step }}</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if order.status == 'Shipped' %}
+    <div class="info-box mt-16"><i class="fas fa-truck" style="color:var(--gold);margin-right:6px;"></i>Your order is on its way! Expected delivery in 1–3 business days.</div>
+    {% elif order.status == 'Delivered' %}
+    <div class="info-box green mt-16"><i class="fas fa-check-circle" style="color:var(--easy);margin-right:6px;"></i>Your order has been delivered! Thank you for shopping with AOneArt.</div>
+    {% elif order.status == 'Pending' %}
+    <div class="info-box mt-16"><i class="fas fa-info-circle" style="color:var(--gold);margin-right:6px;"></i>Your order has been received. We will confirm it via WhatsApp shortly.</div>
+    {% elif order.status == 'Confirmed' %}
+    <div class="info-box mt-16"><i class="fas fa-check" style="color:var(--easy);margin-right:6px;"></i>Your order is confirmed and being prepared for dispatch.</div>
+    {% endif %}
+
+    <div class="flex justify-center gap-12 flex-wrap mt-24">
+      <a href="https://wa.me/923076363893?text=Hello%20AOneArt!%20I%20want%20to%20check%20on%20my%20Order%20%23OA{{ '%04d' % order.id }}" target="_blank" class="btn btn-green"><i class="fab fa-whatsapp"></i> WhatsApp for Update</a>
+      <a href="{{ url_for('shop') }}" class="btn btn-ghost"><i class="fas fa-shopping-bag"></i> Continue Shopping</a>
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon"><i class="fas fa-search"></i></div>
+      <div class="empty-state-title">Order Not Found</div>
+      <div class="empty-state-desc">We could not find that order. Please check your Order ID or contact us on WhatsApp.</div>
+      <a href="https://wa.me/923076363893" target="_blank" class="btn btn-green"><i class="fab fa-whatsapp"></i> Contact on WhatsApp</a>
+    </div>
+    {% endif %}
+  {% endif %}
+
+  <div class="info-box mt-24" style="text-align:center;">
+    <p style="font-size:13px;color:var(--muted);">Don't have your Order ID? <a href="https://wa.me/923076363893" target="_blank" style="color:var(--gold);">WhatsApp us</a> with your name and phone number and we will find your order.</p>
+  </div>
+</div>
+{% endblock %}

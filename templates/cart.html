@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}My Cart – AOneArt{% endblock %}
+{% block content %}
+<div class="page-hero"><h1 class="page-hero-title">Shopping <span>Cart</span></h1><nav class="breadcrumb"><a href="{{ url_for('index') }}">Home</a><span>›</span><span>Cart</span></nav></div>
+
+{% if cart %}
+<div class="cart-layout">
+  <div>
+    <div class="cart-table">
+      <div class="cart-head"><span>Product</span><span>Price</span><span>Qty</span><span>Subtotal</span><span></span></div>
+      {% for item in cart %}
+      <div class="cart-row">
+        <div class="cart-info">
+          <img src="{{ item.product.image | product_img }}" alt="{{ item.product.name }}" class="cart-thumb">
+          <div><div class="cart-name">{{ item.product.name }}</div><div class="cart-cat">{{ item.product.category }}</div></div>
+        </div>
+        <div class="cart-price-cell">Rs. {{ "{:,.0f}".format(item.product.price) }}</div>
+        <form class="cart-qty-form" action="{{ url_for('update_cart', pid=item.product.id) }}" method="POST">
+          <input type="number" name="qty" value="{{ item.qty }}" min="1" max="{{ item.product.stock }}" onchange="this.form.submit()">
+        </form>
+        <div class="cart-sub">Rs. {{ "{:,.0f}".format(item.subtotal) }}</div>
+        <a href="{{ url_for('remove_from_cart', pid=item.product.id) }}" class="cart-rm" title="Remove"><i class="fas fa-times"></i></a>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="flex gap-12 mt-16">
+      <a href="{{ url_for('shop') }}" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left"></i> Continue Shopping</a>
+    </div>
+  </div>
+
+  <div class="order-summary">
+    <div class="summary-title">Order Summary</div>
+    {% for item in cart %}
+    <div class="summary-row"><span class="lbl">{{ item.product.name[:28] }}{% if item.product.name|length>28 %}…{% endif %} ×{{ item.qty }}</span><span>Rs. {{ "{:,.0f}".format(item.subtotal) }}</span></div>
+    {% endfor %}
+    <div class="summary-row"><span class="lbl">Delivery</span><span style="color:var(--easy);">Free</span></div>
+    <div class="summary-total"><span>Total</span><span class="amt">Rs. {{ "{:,.0f}".format(total) }}</span></div>
+    <div class="info-box mt-16" style="font-size:12px;"><i class="fas fa-shield-alt" style="color:var(--gold);margin-right:5px;"></i>Secure checkout · JazzCash · EasyPaisa · COD</div>
+    <a href="{{ url_for('checkout') }}" class="btn btn-gold btn-full mt-16" style="padding:15px;font-size:14px;"><i class="fas fa-lock"></i> Proceed to Checkout</a>
+    <div class="payment-row mt-12" style="justify-content:center;"><span class="pay-badge jazz">JazzCash</span><span class="pay-badge easy">EasyPaisa</span><span class="pay-badge cod">COD</span></div>
+  </div>
+</div>
+{% else %}
+<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-shopping-bag"></i></div><div class="empty-state-title">Your Cart is Empty</div><div class="empty-state-desc">Browse our collection and add something beautiful to your home.</div><a href="{{ url_for('shop') }}" class="btn btn-gold"><i class="fas fa-th-large"></i> Browse Products</a></div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Admin{% endblock %} – AOneArt</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/static/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="admin-logo"><img src="/static/images/logo_transparent.png" alt="AOneArt"><span>A<span class="gold">One</span>Art</span></div>
+    <nav class="admin-nav">
+      <div class="admin-nav-section">Overview</div>
+      <a href="/admin/dashboard" class="admin-nav-item {% if request.endpoint=='admin_dashboard' %}active{% endif %}"><i class="fas fa-chart-bar"></i> Dashboard</a>
+      <div class="admin-nav-section">Orders</div>
+      <a href="/admin/orders" class="admin-nav-item {% if request.endpoint=='admin_orders' %}active{% endif %}"><i class="fas fa-shopping-bag"></i> All Orders</a>
+      <a href="/admin/orders?status=Pending" class="admin-nav-item"><i class="fas fa-clock"></i> Pending</a>
+      <a href="/admin/orders?status=Shipped" class="admin-nav-item"><i class="fas fa-truck"></i> Shipped</a>
+      <div class="admin-nav-section">Products</div>
+      <a href="/admin/products" class="admin-nav-item {% if 'product' in request.endpoint %}active{% endif %}"><i class="fas fa-box"></i> All Products</a>
+      <a href="/admin/product/new" class="admin-nav-item"><i class="fas fa-plus"></i> Add Product</a>
+      <div class="admin-nav-section">Content</div>
+      <a href="/admin/reviews" class="admin-nav-item {% if request.endpoint=='admin_reviews' %}active{% endif %}"><i class="fas fa-star"></i> Reviews</a>
+      <div class="admin-nav-section">Store</div>
+      <a href="/" target="_blank" class="admin-nav-item"><i class="fas fa-external-link-alt"></i> View Store</a>
+      <a href="/admin/logout" class="admin-nav-item" style="color:var(--red);border-left-color:transparent;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
+  </aside>
+  <div class="admin-main">
+    <div class="admin-header">
+      <div class="admin-page-title">{% block page_title %}Dashboard{% endblock %}</div>
+      <div class="flex items-center gap-12">
+        {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for cat,msg in messages %}<div class="flash flash-{{cat}}" style="position:static;animation:none;"><i class="fas fa-check-circle"></i><span>{{msg}}</span><button onclick="this.parentElement.remove()">×</button></div>{% endfor %}{% endif %}{% endwith %}
+        <a href="/admin/product/new" class="btn btn-gold btn-sm"><i class="fas fa-plus"></i> Add Product</a>
+      </div>
+    </div>
+    <div class="admin-body">{% block content %}{% endblock %}</div>
+  </div>
+</div>
+</body></html>

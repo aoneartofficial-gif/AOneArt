@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} – AOneArt{% endblock %}
+{% block og_type %}product{% endblock %}
+{% block og_title %}{{ product.name }} | AOneArt Pakistan{% endblock %}
+{% block og_desc %}{{ product.description[:160] }}{% endblock %}
+{% block content %}
+<div class="page-hero" style="padding:36px 24px;">
+  <nav class="breadcrumb"><a href="{{ url_for('index') }}">Home</a><span>›</span><a href="{{ url_for('shop') }}">Shop</a><span>›</span><a href="{{ url_for('shop', category=product.category) }}">{{ product.category }}</a><span>›</span><span>{{ product.name }}</span></nav>
+</div>
+
+<div class="product-detail">
+  <div class="pd-img">
+    <img src="{{ product.image | product_img }}" alt="{{ product.name }}" id="mainImg">
+    <div class="pd-zoom" title="Zoom" onclick="openZoom()"><i class="fas fa-expand"></i></div>
+  </div>
+
+  <div>
+    <div class="pd-category">{{ product.category }}</div>
+    <h1 class="pd-title">{{ product.name }}</h1>
+    {% if reviews %}
+    <div class="pd-stars">{% for i in range(avg_rating|int) %}★{% endfor %}{% if avg_rating % 1 >= 0.5 %}½{% endif %} <span style="font-size:13px;font-weight:600;color:var(--gold);">{{ avg_rating }}</span></div>
+    <div class="pd-review-count">{{ reviews|length }} review{{ 's' if reviews|length != 1 }} · <a href="#reviews" style="color:var(--gold);">Read all</a></div>
+    {% endif %}
+    <div class="pd-price"><span style="font-size:.6em;">Rs.</span>{{ "{:,.0f}".format(product.price) }}</div>
+    <p class="pd-desc">{{ product.description }}</p>
+
+    <form action="{{ url_for('add_to_cart', pid=product.id) }}" method="POST" class="pd-actions">
+      <div class="qty-row">
+        <span class="qty-label">Quantity:</span>
+        <div class="qty-ctrl">
+          <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input type="number" name="qty" id="qtyInput" value="1" min="1" max="{{ product.stock }}" class="qty-num">
+          <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <span style="font-size:12px;color:var(--muted);">{{ product.stock }} in stock</span>
+      </div>
+      <button type="submit" class="btn btn-gold btn-full" style="padding:15px;font-size:14px;"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+    </form>
+
+    <div class="share-row mt-16">
+      <span class="share-label">Share:</span>
+      <a href="https://wa.me/923076363893?text=I%20found%20this%20{{ product.name | urlencode }}%20on%20AOneArt!%20https://aoneart.com/product/{{ product.id }}" target="_blank" class="share-btn wa"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+      <a href="mailto:?subject={{ product.name }}&body=Check%20this%20out%20on%20AOneArt:%20https://aoneart.com/product/{{ product.id }}" class="share-btn mail"><i class="fas fa-envelope"></i> Email</a>
+    </div>
+
+    <div class="pd-meta">
+      <div class="pd-meta-row"><strong>Category:</strong><span>{{ product.category }}</span></div>
+      <div class="pd-meta-row"><strong>Material:</strong><span>Premium Powder-Coated Metal</span></div>
+      <div class="pd-meta-row"><strong>Delivery:</strong><span>All Pakistan · COD Available</span></div>
+      <div class="pd-meta-row"><strong>Payment:</strong><span>JazzCash · EasyPaisa · COD</span></div>
+      <div class="pd-meta-row"><strong>Stock:</strong><span style="color:{% if product.stock > 5 %}var(--easy){% elif product.stock > 0 %}orange{% else %}var(--red){% endif %};">{% if product.stock > 5 %}In Stock{% elif product.stock > 0 %}Only {{ product.stock }} left!{% else %}Out of Stock{% endif %}</span></div>
+    </div>
+
+    <div class="info-box mt-24">
+      <p style="font-weight:600;color:var(--white);margin-bottom:10px;"><i class="fas fa-question-circle" style="color:var(--gold);margin-right:6px;"></i>Have questions about this product?</p>
+      <div class="flex gap-8 flex-wrap">
+        <a href="https://wa.me/923076363893?text=Hello%20AOneArt!%20I'm%20interested%20in%20{{ product.name | urlencode }}" target="_blank" class="btn btn-green btn-sm"><i class="fab fa-whatsapp"></i> Ask on WhatsApp</a>
+        <a href="mailto:abbasmuhammadhuzaifa@gmail.com?subject=Query about {{ product.name }}" class="btn btn-ghost btn-sm"><i class="fas fa-envelope"></i> Email Us</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEWS -->
+<div class="reviews-section" id="reviews">
+  <div style="border-top:1px solid var(--border);padding-top:48px;">
+    <div class="section-header" style="text-align:left;margin-bottom:32px;">
+      <span class="eyebrow">Customer Feedback</span>
+      <h2 class="section-title" style="font-size:1.8rem;">Reviews{% if reviews %} <span style="color:var(--gold);font-size:1.2rem;">({{ reviews|length }})</span>{% endif %}</h2>
+    </div>
+
+    <div class="review-form-card">
+      <div class="review-form-title"><i class="fas fa-pen" style="color:var(--gold);margin-right:8px;"></i>Write a Review</div>
+      <form action="{{ url_for('add_review', pid=product.id) }}" method="POST">
+        <div class="review-grid">
+          <div class="form-group"><label>Your Name *</label><input type="text" name="name" placeholder="Muhammad Ali" required></div>
+          <div class="form-group"><label>City</label><input type="text" name="city" placeholder="Lahore"></div>
+          <div class="form-group full">
+            <label>Rating</label>
+            <div class="stars-picker">
+              <input type="radio" name="rating" id="s5" value="5" checked><label for="s5">★</label>
+              <input type="radio" name="rating" id="s4" value="4"><label for="s4">★</label>
+              <input type="radio" name="rating" id="s3" value="3"><label for="s3">★</label>
+              <input type="radio" name="rating" id="s2" value="2"><label for="s2">★</label>
+              <input type="radio" name="rating" id="s1" value="1"><label for="s1">★</label>
+            </div>
+          </div>
+          <div class="form-group full"><label>Your Review *</label><textarea name="body" placeholder="Tell others about your experience…" required></textarea></div>
+        </div>
+        <button type="submit" class="btn btn-gold mt-8"><i class="fas fa-paper-plane"></i> Submit Review</button>
+      </form>
+    </div>
+
+    {% if reviews %}
+    <div class="reviews-list">
+      {% for r in reviews %}
+      <div class="review-card">
+        <div class="review-header">
+          <div class="review-avatar">{{ r.name[0] }}</div>
+          <div><div class="review-name">{{ r.name }}</div><div class="review-meta">{{ r.city }}{% if r.city %} · {% endif %}{{ r.created_at.strftime('%d %b %Y') }}</div></div>
+        </div>
+        <div class="review-stars">{% for i in range(r.rating) %}★{% endfor %}</div>
+        <div class="review-body">{{ r.body }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:36px;color:var(--muted);">Be the first to review this product!</div>
+    {% endif %}
+  </div>
+</div>
+
+{% if related %}
+<section class="section" style="padding-top:40px;border-top:1px solid var(--border);">
+  <div class="container">
+    <div class="section-header"><span class="eyebrow">You May Also Like</span><h2 class="section-title">Related Products</h2><div class="divider"></div></div>
+    <div class="products-grid">
+      {% for p in related %}
+      <div class="product-card">
+        <div class="product-img-wrap"><img src="{{ p.image | product_img }}" alt="{{ p.name }}" loading="lazy"><div class="product-overlay"><a href="{{ url_for('product_detail', pid=p.id) }}" class="p-quick"><i class="fas fa-eye"></i> View</a></div></div>
+        <div class="product-body"><div class="p-category">{{ p.category }}</div><div class="p-name"><a href="{{ url_for('product_detail', pid=p.id) }}">{{ p.name }}</a></div>
+          <div class="product-footer"><div class="p-price"><span class="p-currency">Rs.</span>{{ "{:,.0f}".format(p.price) }}</div>
+          <form action="{{ url_for('add_to_cart', pid=p.id) }}" method="POST"><input type="hidden" name="qty" value="1"><button class="btn-add" type="submit"><i class="fas fa-shopping-bag"></i> Add</button></form></div></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Zoom modal -->
+<div id="zoomModal" onclick="closeZoom()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out;">
+  <img id="zoomImg" style="max-width:90vw;max-height:90vh;border-radius:8px;border:1px solid var(--border);">
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function openZoom(){
+  const m=document.getElementById('zoomModal');
+  document.getElementById('zoomImg').src=document.getElementById('mainImg').src;
+  m.style.display='flex';document.body.style.overflow='hidden';
+}
+function closeZoom(){
+  document.getElementById('zoomModal').style.display='none';document.body.style.overflow='';
+}
+</script>
+{% endblock %}

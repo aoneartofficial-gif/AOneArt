@@ -1,0 +1,123 @@
+{% extends 'admin/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="stat-cards">
+  <div class="stat-card">
+    <div class="stat-icon gold"><i class="fas fa-shopping-bag"></i></div>
+    <div class="stat-num">{{ orders|length }}</div>
+    <div class="stat-label">Total Orders</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green"><i class="fas fa-rupee-sign"></i></div>
+    <div class="stat-num">Rs. {{ "{:,.0f}".format(revenue) }}</div>
+    <div class="stat-label">Total Revenue</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="fas fa-clock"></i></div>
+    <div class="stat-num">{{ pending }}</div>
+    <div class="stat-label">Pending Orders</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon purple"><i class="fas fa-truck"></i></div>
+    <div class="stat-num">{{ shipped }}</div>
+    <div class="stat-label">Shipped Orders</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:22px;">
+  <!-- Recent Orders -->
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <span class="admin-card-title">Recent Orders</span>
+      <a href="/admin/orders" class="btn btn-ghost btn-sm">View All</a>
+    </div>
+    <table class="admin-table">
+      <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for o in orders[:8] %}
+        <tr>
+          <td><strong class="text-gold">{{ o.order_ref }}</strong></td>
+          <td>{{ o.customer_name }}<br><span style="font-size:11px;color:var(--muted);">{{ o.city }}</span></td>
+          <td>Rs. {{ "{:,.0f}".format(o.total) }}</td>
+          <td><span class="status-badge status-{{ o.status }}">{{ o.status }}</span></td>
+          <td><a href="/admin/order/{{ o.id }}">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Products overview -->
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <span class="admin-card-title">Products</span>
+      <a href="/admin/product/new" class="btn btn-gold btn-sm"><i class="fas fa-plus"></i> Add</a>
+    </div>
+    <table class="admin-table">
+      <thead><tr><th>Product</th><th>Price</th><th>Stock</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for p in products %}
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <img src="{{ p.image | product_img }}" style="width:36px;height:36px;border-radius:5px;object-fit:cover;border:1px solid var(--border);">
+              <span>{{ p.name[:30] }}</span>
+            </div>
+          </td>
+          <td>Rs. {{ "{:,.0f}".format(p.price) }}</td>
+          <td>
+            <span style="color:{% if p.stock > 5 %}var(--easy){% elif p.stock > 0 %}orange{% else %}var(--red){% endif %};">
+              {{ p.stock }}
+            </span>
+          </td>
+          <td><a href="/admin/product/{{ p.id }}/edit">Edit</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Quick Stats Row -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px;">
+  <div class="admin-card">
+    <div class="admin-card-header"><span class="admin-card-title">Orders by Status</span></div>
+    <div style="padding:16px 22px;">
+      {% set statuses = [('Pending','var(--gold)'),('Confirmed','#2196f3'),('Processing','#9c27b0'),('Shipped','var(--gold-l)'),('Delivered','var(--easy)'),('Cancelled','var(--red)')] %}
+      {% for status, color in statuses %}
+        {% set count = orders|selectattr('status','equalto',status)|list|length %}
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:13px;color:var(--text);">{{ status }}</span>
+          <span class="status-badge status-{{ status }}">{{ count }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <div class="admin-card-header"><span class="admin-card-title">Payment Methods</span></div>
+    <div style="padding:16px 22px;">
+      {% set methods = [('jazzcash','JazzCash','var(--jazz)'),('easypaisa','EasyPaisa','var(--easy)'),('cod','Cash on Delivery','var(--gold)')] %}
+      {% for val, label, color in methods %}
+        {% set count = orders|selectattr('payment_method','equalto',val)|list|length %}
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:13px;color:var(--text);">{{ label }}</span>
+          <span style="font-size:13px;font-weight:600;color:{{ color }};">{{ count }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <div class="admin-card-header"><span class="admin-card-title">Quick Actions</span></div>
+    <div style="padding:16px 22px;display:flex;flex-direction:column;gap:10px;">
+      <a href="/admin/orders?status=Pending" class="btn btn-gold btn-sm"><i class="fas fa-clock"></i> View Pending Orders ({{ pending }})</a>
+      <a href="/admin/product/new" class="btn btn-ghost btn-sm"><i class="fas fa-plus"></i> Add New Product</a>
+      <a href="https://wa.me/923076363893" target="_blank" class="btn btn-green btn-sm"><i class="fab fa-whatsapp"></i> Open WhatsApp</a>
+      <a href="/" target="_blank" class="btn btn-ghost btn-sm"><i class="fas fa-external-link-alt"></i> View Store</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

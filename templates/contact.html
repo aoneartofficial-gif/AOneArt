@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us – AOneArt{% endblock %}
+{% block content %}
+<div class="page-hero"><h1 class="page-hero-title">Get in <span>Touch</span></h1><nav class="breadcrumb"><a href="{{ url_for('index') }}">Home</a><span>›</span><span>Contact</span></nav></div>
+<div class="contact-layout">
+  <div>
+    <h2 class="contact-info-title">We'd Love to Hear From You</h2>
+    <p class="contact-info-desc">Have a question about a product, need a custom order, or want to track your delivery? Reach out on WhatsApp — we respond within hours, 7 days a week.</p>
+    <div class="contact-item"><div class="contact-icon"><i class="fab fa-whatsapp"></i></div><div><div class="contact-item-title">WhatsApp (Fastest)</div><div class="contact-item-val"><a href="https://wa.me/923076363893" target="_blank">+92-307-6363893 — Tap to chat</a></div></div></div>
+    <div class="contact-item"><div class="contact-icon"><i class="fas fa-envelope"></i></div><div><div class="contact-item-title">Email</div><div class="contact-item-val"><a href="mailto:abbasmuhammadhuzaifa@gmail.com">abbasmuhammadhuzaifa@gmail.com</a></div></div></div>
+    <div class="contact-item"><div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div><div><div class="contact-item-title">Location</div><div class="contact-item-val">Pakistan — Nationwide Delivery</div></div></div>
+    <div class="contact-item"><div class="contact-icon"><i class="fas fa-clock"></i></div><div><div class="contact-item-title">Response Time</div><div class="contact-item-val">We reply within 2 hours, 7 days a week</div></div></div>
+    <div class="flex gap-12 flex-wrap mt-24">
+      <a href="https://wa.me/923076363893" target="_blank" class="btn btn-green"><i class="fab fa-whatsapp"></i> Open WhatsApp</a>
+      <a href="mailto:abbasmuhammadhuzaifa@gmail.com" class="btn btn-ghost"><i class="fas fa-envelope"></i> Send Email</a>
+      <a href="{{ url_for('track_order') }}" class="btn btn-ghost"><i class="fas fa-search"></i> Track Order</a>
+    </div>
+  </div>
+  <div class="contact-form-card">
+    <h3 style="font-family:var(--ff-d);font-size:1.2rem;color:var(--white);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);"><i class="fas fa-paper-plane" style="color:var(--gold);margin-right:8px;"></i>Send a Message</h3>
+    <div class="form-group"><label>Your Name</label><input type="text" placeholder="Muhammad Ali"></div>
+    <div class="form-group"><label>Phone / WhatsApp</label><input type="tel" placeholder="+92-3XX-XXXXXXX"></div>
+    <div class="form-group"><label>Subject</label><input type="text" placeholder="Custom order / Query / Feedback"></div>
+    <div class="form-group"><label>Message</label><textarea placeholder="Tell us how we can help…" style="min-height:120px;"></textarea></div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px;"><i class="fas fa-bolt" style="color:var(--gold);margin-right:4px;"></i>For instant response, use WhatsApp below.</p>
+    <a href="https://wa.me/923076363893?text=Hello%20AOneArt!%20I%20have%20a%20question." target="_blank" class="btn btn-green btn-full"><i class="fab fa-whatsapp"></i> Send via WhatsApp</a>
+  </div>
+</div>
+{% endblock %}

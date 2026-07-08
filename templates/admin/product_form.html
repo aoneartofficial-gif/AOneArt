@@ -1,0 +1,152 @@
+{% extends 'admin/base.html' %}
+{% block title %}{{ 'Edit' if product else 'Add' }} Product{% endblock %}
+{% block page_title %}{{ 'Edit Product' if product else 'Add New Product' }}{% endblock %}
+{% block content %}
+
+<div style="max-width:860px;">
+  <div style="margin-bottom:18px;">
+    <a href="/admin/products" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left"></i> Back to Products</a>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data"
+        action="{{ url_for('admin_product_edit', pid=product.id) if product else url_for('admin_product_new') }}">
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:22px;align-items:start;">
+
+      <!-- Main form -->
+      <div>
+        <div class="admin-card" style="margin-bottom:22px;">
+          <div class="admin-card-header"><span class="admin-card-title">Product Information</span></div>
+          <div style="padding:24px;">
+            <div class="form-group">
+              <label>Product Name *</label>
+              <input type="text" name="name" value="{{ product.name if product else '' }}" placeholder="e.g. Diamond Geometric Wall Clock" required>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea name="description" style="min-height:140px;" placeholder="Detailed product description, dimensions, material, battery info…">{{ product.description if product else '' }}</textarea>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div class="form-group">
+                <label>Price (Rs.) *</label>
+                <input type="number" name="price" value="{{ product.price|int if product else '' }}" min="0" step="50" required placeholder="e.g. 3500">
+              </div>
+              <div class="form-group">
+                <label>Stock Quantity *</label>
+                <input type="number" name="stock" value="{{ product.stock if product else 10 }}" min="0" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Category *</label>
+              <select name="category" required>
+                <option value="">Select Category…</option>
+                {% set existing = categories + ['Wall Clocks','Islamic Art','Home Decor','Wall Art'] %}
+                {% set seen = [] %}
+                {% for cat in existing %}
+                  {% if cat not in seen %}
+                    {% set _ = seen.append(cat) %}
+                    <option value="{{ cat }}" {% if product and product.category == cat %}selected{% endif %}>{{ cat }}</option>
+                  {% endif %}
+                {% endfor %}
+                <option value="__new__">+ New Category…</option>
+              </select>
+            </div>
+            <div class="form-group" id="newCatGroup" style="display:none;">
+              <label>New Category Name</label>
+              <input type="text" id="newCatInput" placeholder="e.g. Wooden Art">
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-header"><span class="admin-card-title">Product Image</span></div>
+          <div style="padding:24px;">
+            {% if product and product.image %}
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Current Image:</div>
+              <img src="{{ product.image | product_img }}" style="width:120px;height:120px;border-radius:8px;object-fit:cover;border:1px solid var(--border);">
+            </div>
+            {% endif %}
+            <div class="form-group">
+              <label>{{ 'Replace Image' if product else 'Upload Image' }} (JPG, PNG, WEBP — max 8MB)</label>
+              <input type="file" name="image" accept="image/*" id="imgInput" onchange="previewImg(this)">
+            </div>
+            <img id="imgPreview" style="display:none;width:120px;height:120px;border-radius:8px;object-fit:cover;border:1px solid var(--border);margin-top:10px;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar options -->
+      <div>
+        <div class="admin-card" style="margin-bottom:22px;">
+          <div class="admin-card-header"><span class="admin-card-title">Visibility</span></div>
+          <div style="padding:20px;">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:14px;color:var(--white);">
+              <input type="checkbox" name="featured" {% if product and product.featured %}checked{% endif %}
+                     style="width:18px;height:18px;accent-color:var(--gold);">
+              Featured Product
+            </label>
+            <p style="font-size:12px;color:var(--muted);margin-top:8px;">Featured products appear on the homepage and are highlighted in the shop.</p>
+          </div>
+        </div>
+
+        <div class="admin-card" style="margin-bottom:22px;">
+          <div class="admin-card-header"><span class="admin-card-title">Actions</span></div>
+          <div style="padding:20px;display:flex;flex-direction:column;gap:10px;">
+            <button type="submit" class="btn btn-gold btn-full">
+              <i class="fas fa-save"></i> {{ 'Update Product' if product else 'Add Product' }}
+            </button>
+            <a href="/admin/products" class="btn btn-ghost btn-full"><i class="fas fa-times"></i> Cancel</a>
+            {% if product %}
+            <form method="POST" action="/admin/product/{{ product.id }}/delete" style="margin:0;" onsubmit="return confirm('Delete this product? This cannot be undone.');">
+              <button type="submit" class="btn btn-full" style="background:rgba(231,76,60,.12);color:var(--red);border:1px solid rgba(231,76,60,.25);">
+                <i class="fas fa-trash"></i> Delete Product
+              </button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if product %}
+        <div class="admin-card">
+          <div class="admin-card-header"><span class="admin-card-title">Product Info</span></div>
+          <div style="padding:16px 20px;font-size:13px;display:flex;flex-direction:column;gap:8px;">
+            <div class="flex justify-between"><span style="color:var(--muted);">ID</span><span>#{{ product.id }}</span></div>
+            <div class="flex justify-between"><span style="color:var(--muted);">Created</span><span>{{ product.created_at.strftime('%d %b %Y') }}</span></div>
+            <div class="flex justify-between"><span style="color:var(--muted);">Reviews</span><span>{{ product.reviews|length }}</span></div>
+            <a href="/product/{{ product.id }}" target="_blank" class="btn btn-ghost btn-sm mt-8"><i class="fas fa-external-link-alt"></i> View on Store</a>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+function previewImg(input) {
+  const preview = document.getElementById('imgPreview');
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+// New category handler
+document.querySelector('select[name="category"]')?.addEventListener('change', function() {
+  const newGroup = document.getElementById('newCatGroup');
+  const newInput = document.getElementById('newCatInput');
+  if (this.value === '__new__') {
+    newGroup.style.display = 'block';
+    newInput.required = true;
+    newInput.focus();
+    // When user types, update the select value via form submission
+    newInput.addEventListener('input', () => { this.value = newInput.value || '__new__'; });
+  } else {
+    newGroup.style.display = 'none';
+    newInput.required = false;
+  }
+});
+</script>
+{% endblock %}

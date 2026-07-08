@@ -1,0 +1,70 @@
+{% extends 'admin/base.html' %}
+{% block title %}Orders{% endblock %}
+{% block page_title %}All Orders{% endblock %}
+{% block content %}
+
+<!-- Filter tabs -->
+<div style="display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;">
+  {% for s in ['','Pending','Confirmed','Processing','Shipped','Delivered','Cancelled'] %}
+  <a href="/admin/orders{% if s %}?status={{ s }}{% endif %}"
+     class="btn btn-sm {% if status_filter == s %}btn-gold{% else %}btn-ghost{% endif %}">
+    {{ s if s else 'All' }}
+  </a>
+  {% endfor %}
+</div>
+
+<div class="admin-card">
+  <div class="admin-card-header">
+    <span class="admin-card-title">{{ orders|length }} Order{{ 's' if orders|length != 1 }}{% if status_filter %} — {{ status_filter }}{% endif %}</span>
+  </div>
+  {% if orders %}
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Customer</th>
+        <th>City</th>
+        <th>Items</th>
+        <th>Total</th>
+        <th>Payment</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for o in orders %}
+      <tr>
+        <td><strong class="text-gold">{{ o.order_ref }}</strong></td>
+        <td>
+          {{ o.customer_name }}<br>
+          <span style="font-size:11px;color:var(--muted);">{{ o.customer_phone }}</span>
+        </td>
+        <td>{{ o.city }}</td>
+        <td>
+          {% set items = o.items|from_json %}
+          {{ items|length }} item{{ 's' if items|length != 1 }}
+        </td>
+        <td style="color:var(--gold);font-weight:600;">Rs. {{ "{:,.0f}".format(o.total) }}</td>
+        <td>
+          {% if o.payment_method == 'jazzcash' %}<span style="color:var(--jazz);">JazzCash</span>
+          {% elif o.payment_method == 'easypaisa' %}<span style="color:var(--easy);">EasyPaisa</span>
+          {% else %}<span style="color:var(--gold);">COD</span>{% endif %}
+        </td>
+        <td><span class="status-badge status-{{ o.status }}">{{ o.status }}</span></td>
+        <td style="font-size:12px;">{{ o.created_at.strftime('%d %b %Y') }}<br><span style="color:var(--muted);">{{ o.created_at.strftime('%I:%M %p') }}</span></td>
+        <td>
+          <a href="/admin/order/{{ o.id }}" class="btn btn-ghost btn-sm">View</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div style="padding:40px;text-align:center;color:var(--muted);">
+    <i class="fas fa-inbox" style="font-size:36px;margin-bottom:12px;display:block;"></i>
+    No orders found{% if status_filter %} with status "{{ status_filter }}"{% endif %}.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

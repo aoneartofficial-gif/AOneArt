@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}FAQ – AOneArt{% endblock %}
+{% block content %}
+<div class="page-hero"><h1 class="page-hero-title">Frequently Asked <span>Questions</span></h1><nav class="breadcrumb"><a href="{{ url_for('index') }}">Home</a><span>›</span><span>FAQ</span></nav></div>
+<div class="faq-wrap">
+  <div class="section-header" style="text-align:left;margin-bottom:28px;"><span class="eyebrow">Got Questions?</span><h2 class="section-title" style="font-size:1.8rem;">We Have Answers</h2></div>
+  {% set faqs = [
+    ("What materials are your products made from?", "All AOneArt products are crafted from premium-grade mild steel or stainless steel, finished with a durable powder coat for long-lasting colour and rust resistance. Our Islamic art pieces feature a beautiful black and gold combination."),
+    ("How long does delivery take?", "Standard delivery across Pakistan takes 3–7 business days depending on your city. Major cities like Lahore, Karachi, and Islamabad typically receive orders within 3–4 days. We dispatch orders within 24–48 hours of confirmation."),
+    ("Do you offer Cash on Delivery?", "Yes! We offer Cash on Delivery across Pakistan at no extra charge. You can also pay via JazzCash (0329-7127271) or EasyPaisa (0336-4138692) for advance payment."),
+    ("How do I track my order?", "Visit our Track Order page and enter your Order ID (e.g. OA0001). You'll see real-time status updates. You can also WhatsApp us at +92-307-6363893 with your order number."),
+    ("Can I place a custom or bulk order?", "Absolutely! We welcome custom orders for specific sizes, designs, or corporate/wedding gifts. Just WhatsApp us at +92-307-6363893 or email abbasmuhammadhuzaifa@gmail.com with your requirements."),
+    ("What if my product arrives damaged?", "We take great care in packaging, but if your product arrives damaged, please photograph it within 24 hours and WhatsApp us. We'll arrange a replacement or refund promptly."),
+    ("Do you ship outside Pakistan?", "Currently we ship within Pakistan only. For international orders, please contact us directly via WhatsApp to discuss arrangements."),
+    ("How do I hang the wall art / clock?", "All our wall pieces come with pre-drilled mounting holes and basic hardware. Installation is straightforward — you just need a couple of wall screws and anchors (not included). Instructions are included with each piece."),
+    ("Are the clocks battery operated or plug-in?", "All our clocks are battery operated (AA battery) with a silent quartz mechanism, meaning no ticking noise. Perfect for bedrooms and offices."),
+    ("How do I care for my metal art piece?", "Wipe with a dry or slightly damp cloth. Avoid harsh chemicals or abrasive cleaners. The powder-coat finish is durable but keep out of direct prolonged moisture."),
+  ] %}
+  {% for q, a in faqs %}
+  <div class="faq-item">
+    <div class="faq-q"><span>{{ q }}</span><i class="fas fa-chevron-down"></i></div>
+    <div class="faq-a"><div class="faq-a-inner">{{ a }}</div></div>
+  </div>
+  {% endfor %}
+
+  <div style="text-align:center;margin-top:40px;padding:28px;background:var(--dark2);border:1px solid var(--border);border-radius:12px;">
+    <p style="font-family:var(--ff-d);font-size:1.2rem;color:var(--white);margin-bottom:12px;">Still have a question?</p>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:20px;">Our team typically responds within 2 hours on WhatsApp.</p>
+    <div class="flex justify-center gap-12 flex-wrap">
+      <a href="https://wa.me/923076363893" target="_blank" class="btn btn-green"><i class="fab fa-whatsapp"></i> WhatsApp Us</a>
+      <a href="mailto:abbasmuhammadhuzaifa@gmail.com" class="btn btn-ghost"><i class="fas fa-envelope"></i> Email Us</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

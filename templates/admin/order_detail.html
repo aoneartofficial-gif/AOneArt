@@ -1,0 +1,156 @@
+{% extends 'admin/base.html' %}
+{% block title %}Order {{ order.order_ref }}{% endblock %}
+{% block page_title %}Order {{ order.order_ref }}{% endblock %}
+{% block content %}
+
+<div style="display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap;">
+  <a href="/admin/orders" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left"></i> Back to Orders</a>
+  <a href="{{ wa_link }}" target="_blank" class="btn btn-green btn-sm"><i class="fab fa-whatsapp"></i> WhatsApp Customer</a>
+  {% if order.customer_email %}
+  <a href="mailto:{{ order.customer_email }}" class="btn btn-ghost btn-sm"><i class="fas fa-envelope"></i> Email Customer</a>
+  {% endif %}
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start;">
+  <!-- Left column -->
+  <div>
+    <!-- Order Items -->
+    <div class="admin-card" style="margin-bottom:22px;">
+      <div class="admin-card-header">
+        <span class="admin-card-title">Order Items</span>
+        <span class="text-gold" style="font-weight:700;font-size:1.1rem;">Rs. {{ "{:,.0f}".format(order.total) }}</span>
+      </div>
+      <table class="admin-table">
+        <thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Subtotal</th></tr></thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>Rs. {{ "{:,.0f}".format(item.price) }}</td>
+            <td>{{ item.qty }}</td>
+            <td style="color:var(--gold);font-weight:600;">Rs. {{ "{:,.0f}".format(item.price * item.qty) }}</td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td colspan="3" style="text-align:right;font-weight:600;color:var(--white);">Total</td>
+            <td style="color:var(--gold);font-weight:700;font-size:1.1rem;">Rs. {{ "{:,.0f}".format(order.total) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Customer Info -->
+    <div class="admin-card" style="margin-bottom:22px;">
+      <div class="admin-card-header"><span class="admin-card-title">Customer Details</span></div>
+      <div style="padding:20px 22px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Name</div>
+          <div style="color:var(--white);font-weight:500;">{{ order.customer_name }}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Phone</div>
+          <div><a href="tel:{{ order.customer_phone }}" style="color:var(--gold);">{{ order.customer_phone }}</a></div>
+        </div>
+        {% if order.customer_email %}
+        <div>
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Email</div>
+          <div><a href="mailto:{{ order.customer_email }}" style="color:var(--gold);">{{ order.customer_email }}</a></div>
+        </div>
+        {% endif %}
+        <div>
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">City</div>
+          <div style="color:var(--white);">{{ order.city }}</div>
+        </div>
+        <div style="grid-column:1/-1;">
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Delivery Address</div>
+          <div style="color:var(--white);">{{ order.customer_address }}</div>
+        </div>
+        {% if order.notes %}
+        <div style="grid-column:1/-1;">
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Notes</div>
+          <div style="color:var(--text);">{{ order.notes }}</div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Payment Info -->
+    <div class="admin-card">
+      <div class="admin-card-header"><span class="admin-card-title">Payment Details</span></div>
+      <div style="padding:20px 22px;">
+        <div style="display:flex;gap:24px;flex-wrap:wrap;">
+          <div>
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Method</div>
+            {% if order.payment_method == 'jazzcash' %}<span class="pay-badge jazz">JazzCash</span>
+            {% elif order.payment_method == 'easypaisa' %}<span class="pay-badge easy">EasyPaisa</span>
+            {% else %}<span class="pay-badge cod">Cash on Delivery</span>{% endif %}
+          </div>
+          {% if order.payment_number %}
+          <div>
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Transaction Ref</div>
+            <div style="color:var(--gold);font-weight:600;font-family:var(--ff-d);">{{ order.payment_number }}</div>
+          </div>
+          {% endif %}
+          <div>
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Amount</div>
+            <div style="color:var(--gold);font-weight:700;font-size:1.1rem;">Rs. {{ "{:,.0f}".format(order.total) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right column -->
+  <div>
+    <!-- Update Status -->
+    <div class="admin-card" style="margin-bottom:22px;">
+      <div class="admin-card-header"><span class="admin-card-title">Order Status</span></div>
+      <div style="padding:20px 22px;">
+        <div style="text-align:center;margin-bottom:16px;">
+          <span class="status-badge status-{{ order.status }}" style="font-size:14px;padding:8px 20px;">{{ order.status }}</span>
+        </div>
+        <form method="POST" action="/admin/order/{{ order.id }}/status">
+          <label style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:block;">Update Status</label>
+          <select name="status" style="background:var(--dark3);border:1px solid var(--border);color:var(--white);padding:10px 14px;border-radius:6px;width:100%;margin-bottom:12px;font-size:14px;outline:none;">
+            {% for s in ['Pending','Confirmed','Processing','Shipped','Delivered','Cancelled'] %}
+            <option value="{{ s }}" {% if order.status == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="btn btn-gold btn-full"><i class="fas fa-save"></i> Update Status</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="admin-card" style="margin-bottom:22px;">
+      <div class="admin-card-header"><span class="admin-card-title">Order Info</span></div>
+      <div style="padding:16px 22px;">
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;">
+          <span style="color:var(--muted);">Order ID</span><span class="text-gold">{{ order.order_ref }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;">
+          <span style="color:var(--muted);">Date</span><span>{{ order.created_at.strftime('%d %b %Y') }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;">
+          <span style="color:var(--muted);">Time</span><span>{{ order.created_at.strftime('%I:%M %p') }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;">
+          <span style="color:var(--muted);">Items</span><span>{{ items|length }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WhatsApp Quick Message -->
+    <div class="admin-card">
+      <div class="admin-card-header"><span class="admin-card-title">Quick Actions</span></div>
+      <div style="padding:16px 22px;display:flex;flex-direction:column;gap:10px;">
+        <a href="{{ wa_link }}" target="_blank" class="btn btn-green btn-sm"><i class="fab fa-whatsapp"></i> Message Customer on WhatsApp</a>
+        <a href="/track?order_id={{ order.order_ref }}" target="_blank" class="btn btn-ghost btn-sm"><i class="fas fa-search"></i> Customer Track View</a>
+        {% if order.customer_email %}
+        <a href="mailto:{{ order.customer_email }}?subject=Your AOneArt Order {{ order.order_ref }}" class="btn btn-ghost btn-sm"><i class="fas fa-envelope"></i> Email Customer</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

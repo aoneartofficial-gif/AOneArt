@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}About Us – AOneArt{% endblock %}
+{% block content %}
+<div class="page-hero">
+  <h1 class="page-hero-title">About <span>AOneArt</span></h1>
+  <nav class="breadcrumb"><a href="{{ url_for('index') }}">Home</a><span>›</span><span>About</span></nav>
+</div>
+
+<div class="about-hero-section">
+  <h2 class="about-title">Crafting Art That <span class="gold">Transforms Spaces</span></h2>
+  <p class="about-desc">AOneArt is Pakistan's premier destination for handcrafted premium metal wall art and designer clocks. Every piece is precision laser-cut from high-grade metal, powder-coated for lasting beauty, and designed to make a bold statement in any space — from living rooms to offices to mosques.</p>
+</div>
+
+<div class="about-cards">
+  <div class="about-card">
+    <div class="about-card-icon"><i class="fas fa-bullseye"></i></div>
+    <h3 class="about-card-title">Our Mission</h3>
+    <p class="about-card-desc">Bring world-class metal art into Pakistani homes at accessible prices, with local payment methods and nationwide delivery.</p>
+  </div>
+  <div class="about-card">
+    <div class="about-card-icon"><i class="fas fa-gem"></i></div>
+    <h3 class="about-card-title">Premium Quality</h3>
+    <p class="about-card-desc">Industrial laser cutting and premium powder coating on every piece — every detail sharp, every product built to last for years.</p>
+  </div>
+  <div class="about-card">
+    <div class="about-card-icon"><i class="fas fa-heart"></i></div>
+    <h3 class="about-card-title">Made with Passion</h3>
+    <p class="about-card-desc">We are art lovers first. Every design is personally selected for its ability to elevate a room and create a lasting impression.</p>
+  </div>
+</div>
+
+<section style="background:var(--dark2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:72px 24px;">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow">Why AOneArt</span>
+      <h2 class="section-title">The AOneArt Difference</h2>
+      <div class="divider"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px;">
+      <div style="background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:22px;">
+        <i class="fas fa-cut" style="font-size:22px;color:var(--gold);margin-bottom:12px;display:block;"></i>
+        <div style="font-weight:600;color:var(--white);margin-bottom:6px;font-size:14px;">Laser Precision</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;">Industrial laser cutting for perfect edges and intricate detail on every product.</div>
+      </div>
+      <div style="background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:22px;">
+        <i class="fas fa-shipping-fast" style="font-size:22px;color:var(--gold);margin-bottom:12px;display:block;"></i>
+        <div style="font-weight:600;color:var(--white);margin-bottom:6px;font-size:14px;">Nationwide Delivery</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;">We ship to every city in Pakistan with reliable courier services and fast dispatch.</div>
+      </div>
+      <div style="background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:22px;">
+        <i class="fas fa-mobile-alt" style="font-size:22px;color:var(--gold);margin-bottom:12px;display:block;"></i>
+        <div style="font-weight:600;color:var(--white);margin-bottom:6px;font-size:14px;">Easy Local Payment</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;">JazzCash, EasyPaisa, and Cash on Delivery — pay the way that suits you best.</div>
+      </div>
+      <div style="background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:22px;">
+        <i class="fas fa-comments" style="font-size:22px;color:var(--gold);margin-bottom:12px;display:block;"></i>
+        <div style="font-weight:600;color:var(--white);margin-bottom:6px;font-size:14px;">Personal Service</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;">WhatsApp us any time — we respond fast and help you find the perfect piece.</div>
+      </div>
+      <div style="background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:22px;">
+        <i class="fas fa-undo" style="font-size:22px;color:var(--gold);margin-bottom:12px;display:block;"></i>
+        <div style="font-weight:600;color:var(--white);margin-bottom:6px;font-size:14px;">Satisfaction First</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;">Not happy with your order? We work with you until it is right.</div>
+      </div>
+      <div style="background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:22px;">
+        <i class="fas fa-palette" style="font-size:22px;color:var(--gold);margin-bottom:12px;display:block;"></i>
+        <div style="font-weight:600;color:var(--white);margin-bottom:6px;font-size:14px;">Custom Orders</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;">Want a custom size or design? Just WhatsApp us and we will make it happen.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:72px 24px;text-align:center;">
+  <div class="container">
+    <h2 class="section-title" style="margin-bottom:12px;">Ready to Transform Your Space?</h2>
+    <p style="color:var(--muted);max-width:460px;margin:0 auto 32px;">Browse our full collection and find the perfect piece for your home.</p>
+    <div class="flex justify-center gap-12 flex-wrap">
+      <a href="{{ url_for('shop') }}" class="btn btn-gold"><i class="fas fa-compass"></i> Shop Collection</a>
+      <a href="{{ url_for('contact') }}" class="btn btn-ghost"><i class="fas fa-phone"></i> Contact Us</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

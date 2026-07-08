@@ -1,0 +1,48 @@
+{% extends 'admin/base.html' %}
+{% block title %}Products{% endblock %}
+{% block page_title %}Products{% endblock %}
+{% block content %}
+<div class="admin-card">
+  <div class="admin-card-header">
+    <span class="admin-card-title">{{ products|length }} Products</span>
+    <a href="/admin/product/new" class="btn btn-gold btn-sm"><i class="fas fa-plus"></i> Add Product</a>
+  </div>
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Image</th><th>Name</th><th>Category</th><th>Price</th>
+        <th>Stock</th><th>Featured</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+      <tr>
+        <td>
+          <img src="{{ p.image | product_img }}" style="width:48px;height:48px;border-radius:6px;object-fit:cover;border:1px solid var(--border);">
+        </td>
+        <td style="font-weight:500;color:var(--white);max-width:200px;">{{ p.name }}</td>
+        <td><span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);">{{ p.category }}</span></td>
+        <td style="color:var(--gold);font-weight:600;">Rs. {{ "{:,.0f}".format(p.price) }}</td>
+        <td>
+          <span style="color:{% if p.stock > 5 %}var(--easy){% elif p.stock > 0 %}orange{% else %}var(--red){% endif %};font-weight:600;">
+            {{ p.stock }}
+          </span>
+        </td>
+        <td>
+          {% if p.featured %}<span style="color:var(--gold);"><i class="fas fa-star"></i> Yes</span>
+          {% else %}<span style="color:var(--muted);">No</span>{% endif %}
+        </td>
+        <td>
+          <div class="flex gap-8">
+            <a href="/admin/product/{{ p.id }}/edit" class="btn btn-ghost btn-sm"><i class="fas fa-edit"></i> Edit</a>
+            <form method="POST" action="/admin/product/{{ p.id }}/delete" onsubmit="return confirm('Delete {{ p.name }}? This cannot be undone.');">
+              <button type="submit" class="btn btn-sm" style="background:rgba(231,76,60,.12);color:var(--red);border:1px solid rgba(231,76,60,.25);"><i class="fas fa-trash"></i></button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

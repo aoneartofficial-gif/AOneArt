@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login – AOneArt</title>
+<link rel="icon" href="/static/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+<div class="admin-login">
+  <div class="admin-login-card">
+    <div class="admin-login-logo">
+      <img src="/static/images/logo_transparent.png" alt="AOneArt">
+      <span>A<span class="gold">One</span>Art</span>
+    </div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:24px;">Admin Panel — Authorized Access Only</p>
+    {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for cat,msg in messages %}<div class="flash flash-{{cat}}" style="margin-bottom:14px;"><i class="fas fa-exclamation-circle"></i><span>{{msg}}</span></div>{% endfor %}{% endif %}{% endwith %}
+    <form method="POST">
+      <div class="form-group" style="text-align:left;"><label>Password</label><input type="password" name="password" placeholder="Enter admin password" autofocus required></div>
+      <button type="submit" class="btn btn-gold btn-full mt-16" style="padding:13px;"><i class="fas fa-lock"></i> Login to Admin</button>
+    </form>
+    <div style="margin-top:20px;"><a href="/" style="font-size:13px;color:var(--muted);"><i class="fas fa-arrow-left"></i> Back to Store</a></div>
+  </div>
+</div>
+</body></html>

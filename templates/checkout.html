@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Checkout – AOneArt{% endblock %}
+{% block content %}
+<div class="page-hero"><h1 class="page-hero-title">Secure <span>Checkout</span></h1><nav class="breadcrumb"><a href="{{ url_for('index') }}">Home</a><span>›</span><a href="{{ url_for('cart') }}">Cart</a><span>›</span><span>Checkout</span></nav></div>
+
+<form method="POST" action="{{ url_for('checkout') }}">
+<div class="checkout-layout">
+  <div>
+    <div class="checkout-form">
+      <div class="form-section-title"><i class="fas fa-user" style="color:var(--gold);margin-right:9px;"></i>Delivery Information</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Full Name *</label><input type="text" name="name" placeholder="Muhammad Ali" required></div>
+        <div class="form-group"><label>Phone / WhatsApp *</label><input type="tel" name="phone" placeholder="+92-3XX-XXXXXXX" required></div>
+        <div class="form-group"><label>Email Address</label><input type="email" name="email" placeholder="your@email.com"></div>
+        <div class="form-group"><label>City *</label>
+          <select name="city" required style="background:var(--dark3);">
+            <option value="">Select City…</option>
+            {% for c in ['Lahore','Karachi','Islamabad','Rawalpindi','Faisalabad','Multan','Peshawar','Quetta','Sialkot','Gujranwala','Hyderabad','Bahawalpur','Sargodha','Sukkur','Abbottabad','Other'] %}
+            <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group full"><label>Full Delivery Address *</label><textarea name="address" placeholder="House #, Street, Area, City" required></textarea></div>
+        <div class="form-group full"><label>Special Instructions</label><textarea name="notes" placeholder="Any special notes for your order…"></textarea></div>
+      </div>
+
+      <div class="mt-24">
+        <div class="form-section-title"><i class="fas fa-credit-card" style="color:var(--gold);margin-right:9px;"></i>Payment Method</div>
+        <div class="pay-options">
+          <div><input type="radio" name="payment_method" id="pj" value="jazzcash" class="pay-radio" required><label for="pj" class="pay-lbl jazz"><i class="fas fa-mobile-alt"></i><span class="pay-lbl-name">JazzCash</span></label></div>
+          <div><input type="radio" name="payment_method" id="pe" value="easypaisa" class="pay-radio"><label for="pe" class="pay-lbl easy"><i class="fas fa-wallet"></i><span class="pay-lbl-name">EasyPaisa</span></label></div>
+          <div><input type="radio" name="payment_method" id="pc" value="cod" class="pay-radio"><label for="pc" class="pay-lbl cod"><i class="fas fa-hand-holding-usd"></i><span class="pay-lbl-name">Cash on Delivery</span></label></div>
+        </div>
+        <div id="pi_jazzcash" class="pay-info">
+          <div class="pay-info-title"><i class="fas fa-mobile-alt" style="color:var(--jazz);margin-right:6px;"></i>JazzCash Payment</div>
+          <div class="pay-info-number">0329-7127271</div>
+          <div class="pay-info-note">Send Rs. <strong>{{ "{:,.0f}".format(total) }}</strong> to this number, then enter your Transaction ID below.</div>
+          <div class="form-group mt-12"><label>Transaction ID / Reference #</label><input type="text" name="payment_number" placeholder="e.g. TXN123456789"></div>
+        </div>
+        <div id="pi_easypaisa" class="pay-info">
+          <div class="pay-info-title"><i class="fas fa-wallet" style="color:var(--easy);margin-right:6px;"></i>EasyPaisa Payment</div>
+          <div class="pay-info-number">0336-4138692</div>
+          <div class="pay-info-note">Send Rs. <strong>{{ "{:,.0f}".format(total) }}</strong> to this number, then enter your Transaction ID below.</div>
+          <div class="form-group mt-12"><label>Transaction ID / Reference #</label><input type="text" name="payment_number" placeholder="e.g. EP123456789"></div>
+        </div>
+        <div id="pi_cod" class="pay-info info-box green">
+          <div class="pay-info-title"><i class="fas fa-truck" style="color:var(--easy);margin-right:6px;"></i>Cash on Delivery</div>
+          <div class="pay-info-note" style="margin-top:6px;">Pay Rs. <strong>{{ "{:,.0f}".format(total) }}</strong> in cash when your order arrives. No advance needed! Available across Pakistan.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="order-summary" style="position:sticky;top:88px;">
+      <div class="summary-title">Your Order</div>
+      {% for item in cart %}
+      <div class="summary-row" style="align-items:center;gap:10px;">
+        <div class="flex items-center gap-8" style="flex:1;min-width:0;">
+          <img src="{{ item.product.image | product_img }}" style="width:48px;height:48px;border-radius:6px;object-fit:cover;border:1px solid var(--border);flex-shrink:0;">
+          <div><div style="font-size:13px;color:var(--white);font-weight:500;">{{ item.product.name[:28] }}{% if item.product.name|length>28 %}…{% endif %}</div><div style="font-size:11px;color:var(--muted);">×{{ item.qty }}</div></div>
+        </div>
+        <span style="font-size:13px;white-space:nowrap;">Rs. {{ "{:,.0f}".format(item.subtotal) }}</span>
+      </div>
+      {% endfor %}
+      <div class="summary-row"><span class="lbl">Delivery</span><span style="color:var(--easy);">Free</span></div>
+      <div class="summary-total"><span>Total</span><span class="amt">Rs. {{ "{:,.0f}".format(total) }}</span></div>
+      <button type="submit" class="btn btn-gold btn-full mt-16" style="padding:15px;font-size:14px;"><i class="fas fa-check-circle"></i> Place Order</button>
+      <p style="text-align:center;font-size:11px;color:var(--muted);margin-top:12px;"><i class="fas fa-shield-alt" style="color:var(--gold);margin-right:4px;"></i>Your order is safe & secure</p>
+    </div>
+  </div>
+</div>
+</form>
+{% endblock %}

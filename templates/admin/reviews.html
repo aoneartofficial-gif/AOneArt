@@ -1,0 +1,54 @@
+{% extends 'admin/base.html' %}
+{% block title %}Reviews{% endblock %}
+{% block page_title %}Customer Reviews{% endblock %}
+{% block content %}
+<div class="admin-card">
+  <div class="admin-card-header">
+    <span class="admin-card-title">{{ reviews|length }} Review{{ 's' if reviews|length != 1 }}</span>
+  </div>
+  {% if reviews %}
+  <table class="admin-table">
+    <thead>
+      <tr><th>Customer</th><th>Product</th><th>Rating</th><th>Review</th><th>Date</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      {% for r in reviews %}
+      <tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--dark3));display:flex;align-items:center;justify-content:center;font-family:var(--ff-d);font-weight:600;color:var(--black);font-size:13px;flex-shrink:0;">{{ r.name[0] }}</div>
+            <div>
+              <div style="font-weight:500;color:var(--white);">{{ r.name }}</div>
+              {% if r.city %}<div style="font-size:11px;color:var(--muted);">{{ r.city }}</div>{% endif %}
+            </div>
+          </div>
+        </td>
+        <td>
+          {% if r.product %}
+          <a href="/product/{{ r.product.id }}" target="_blank" style="color:var(--gold);">{{ r.product.name[:30] }}</a>
+          {% else %}
+          <span style="color:var(--muted);">Deleted product</span>
+          {% endif %}
+        </td>
+        <td><span style="color:var(--gold);">{% for i in range(r.rating) %}★{% endfor %}</span> {{ r.rating }}/5</td>
+        <td style="max-width:280px;font-size:13px;">{{ r.body[:100] }}{% if r.body|length > 100 %}…{% endif %}</td>
+        <td style="font-size:12px;white-space:nowrap;">{{ r.created_at.strftime('%d %b %Y') }}</td>
+        <td>
+          <form method="POST" action="/admin/review/{{ r.id }}/delete" onsubmit="return confirm('Delete this review?');">
+            <button type="submit" class="btn btn-sm" style="background:rgba(231,76,60,.12);color:var(--red);border:1px solid rgba(231,76,60,.25);">
+              <i class="fas fa-trash"></i>
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div style="padding:40px;text-align:center;color:var(--muted);">
+    <i class="fas fa-star" style="font-size:36px;margin-bottom:12px;display:block;opacity:.3;"></i>
+    No reviews yet. Reviews submitted by customers will appear here.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
